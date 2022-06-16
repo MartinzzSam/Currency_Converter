@@ -28,25 +28,26 @@ class MainActivity : AppCompatActivity() {
                 binding.spFromCurrency.selectedItem.toString(),
                 binding.spToCurrency.selectedItem.toString(),
             )
-            lifecycleScope.launchWhenStarted {
-                viewModel.conversion.collect { event ->
-                    Log.e("Error" , event.toString())
-                    when (event) {
-                        is CurrencyEvent.Success -> {
-                            binding.progressBar.isVisible = false
-                            binding.tvResult.setTextColor(Color.BLACK)
-                            binding.tvResult.text = event.resultText
-                        }
-                        is CurrencyEvent.Failure -> {
-                            binding.progressBar.isVisible = false
-                            binding.tvResult.setTextColor(Color.RED)
-                            binding.tvResult.text = event.errorText
-                        }
-                        is CurrencyEvent.Loading -> {
-                            binding.progressBar.isVisible = true
-                        }
-                        else -> Unit
+
+        }
+
+        lifecycleScope.launchWhenStarted {
+            viewModel.conversion.collect { event ->
+                when (event) {
+                    is CurrencyEvent.Success -> {
+                        binding.progressBar.isVisible = false
+                        binding.tvResult.setTextColor(Color.BLACK)
+                        binding.tvResult.text = event.resultText
                     }
+                    is CurrencyEvent.Failure -> {
+                        binding.progressBar.isVisible = false
+                        binding.tvResult.setTextColor(Color.RED)
+                        binding.tvResult.text = event.errorText
+                    }
+                    is CurrencyEvent.Loading -> {
+                        binding.progressBar.isVisible = true
+                    }
+                    else -> Unit
                 }
             }
         }

@@ -36,7 +36,6 @@ class CCViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             _conversion.value = CurrencyEvent.Loading
-            Log.i("DataAdded" , "$amountStr $fromCurrency $toCurrency")
             when(val ccUseCases = ccUseCases.getCCResponse.invoke(amountStr , fromCurrency , toCurrency)) {
                 is Resource.Error-> _conversion.value = CurrencyEvent.Failure(ccUseCases.message!!)
                 is Resource.Success -> {

@@ -1,5 +1,6 @@
 package com.martin.currencyconverter.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.martin.currencyconverter.feature_currency.domain.repository.CCRepository
@@ -14,12 +15,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CCViewModel @Inject constructor(
-    private val ccUseCases: CCUseCases,
-    private val repository : CCRepository
+    private val ccUseCases: CCUseCases
 ) : ViewModel(){
 
     private val _conversion = MutableStateFlow<CurrencyEvent>(CurrencyEvent.Empty)
     val conversion: StateFlow<CurrencyEvent> = _conversion
+
 
 
     fun convert(
@@ -35,6 +36,7 @@ class CCViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             _conversion.value = CurrencyEvent.Loading
+            Log.i("DataAdded" , "$amountStr $fromCurrency $toCurrency")
             when(val ccUseCases = ccUseCases.getCCResponse.invoke(amountStr , fromCurrency , toCurrency)) {
                 is Resource.Error-> _conversion.value = CurrencyEvent.Failure(ccUseCases.message!!)
                 is Resource.Success -> {
